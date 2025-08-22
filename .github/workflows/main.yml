@@ -1,0 +1,46 @@
+        window.addEventListener('load', initChart);
+        window.addEventListener('resize', initChart);
+        
+        // Add transaction to history
+        function addTransaction(type, amount) {
+            const transactionList = document.querySelector('.transaction-list');
+            const transactionItem = document.createElement('div');
+            transactionItem.className = 'transaction-item';
+            
+            const isPositive = amount >= 0;
+            const now = new Date();
+            const timeString = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                              now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            transactionItem.innerHTML = `
+                <div class="transaction-details">
+                    <div class="transaction-icon">
+                        <i class="fas fa-${isPositive ? 'plus' : 'minus'}"></i>
+                    </div>
+                    <div>
+                        <div>${type}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">${timeString}</div>
+                    </div>
+                </div>
+                <div class="transaction-amount ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}€${Math.abs(amount).toFixed(2)}</div>
+            `;
+            
+            transactionList.prepend(transactionItem);
+            
+            // Update balance if it's a withdrawal or fee
+            if (amount < 0) {
+                updateBalance(amount);
+            }
+        }
+        
+        // Simulate periodic mining rewards
+        setInterval(() => {
+            // Only add reward if mining is active
+            if (document.querySelector('.status-indicator span').textContent.includes('Active')) {
+                const reward = (10 + Math.random() * 5).toFixed(2);
+                addTransaction('Mining Reward', parseFloat(reward));
+            }
+        }, 60000); // Every minute for demo purposes
+    </script>
+</body>
+</html>
